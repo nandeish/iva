@@ -1,0 +1,112 @@
+# ============================================================
+# Master configuration for the Automated Land Cover Classification
+# and Change Detection pipeline (CIA 1 / CIA 2 project, CHRIST University)
+# ============================================================
+
+project:
+  name: "land-cover-lulc-pipeline"
+  seed: 42
+  device: "cuda"          # "cuda" or "cpu"
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  tile_size: 256           # pixel size of training tiles
+  tile_overlap: 32
+  bands:                   # Sentinel-2 L2A band selection (10 bands used)
+    - B02   # Blue
+    - B03   # Green
+    - B04   # Red
+    - B05   # Red edge 1
+    - B06   # Red edge 2
+    - B07   # Red edge 3
+    - B08   # NIR
+    - B8A   # Narrow NIR
+    - B11   # SWIR 1
+    - B12   # SWIR 2
+  num_classes: 7
+  class_names:
+    - forest
+    - cropland
+    - water
+    - urban
+    - wetland
+    - barren
+    - grassland
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+
+indices:
+  compute: [NDVI, EVI, NDWI, SAVI, BAI]
+  append_as_channels: true   # concatenated onto the 10-band input tensor
+
+transforms:
+  dft:
+    enabled: true
+    highpass_cutoff: 0.1     # fraction of Nyquist frequency for band-pass filter
+  dwt:
+    enabled: true
+    wavelet: "db4"
+    levels: 2
+  dct:
+    enabled: true
+    block_size: 8
+
+segmentation:
+  architecture: "segformer"     # one of: unet | deeplabv3plus | segformer
+  unet:
+    encoder: "resnet34"
+    encoder_weights: "imagenet"
+  deeplabv3plus:
+    encoder: "resnet50"
+    encoder_weights: "imagenet"
+    output_stride: 16
+  segformer:
+    pretrained: "nvidia/mit-b3"
+  in_channels: 15                # 10 spectral bands + 5 indices (set to match `indices`/`bands`)
+  loss: "combo"                  # dice + focal
+  batch_size: 8
+  epochs: 60
+  lr: 0.00006
+  weight_decay: 0.01
+  optimizer: "adamw"
+  scheduler: "poly"
+
+change_detection:
+  architecture: "siamese_unet"
+  backbone: "resnet34"
+  use_dwt_features: true
+  batch_size: 8
+  epochs: 40
+  lr: 0.0001
+  threshold_method: "otsu"       # otsu | fixed
+  fixed_threshold: 0.5
+
+compression:
+  architecture: "conv_autoencoder"
+  latent_channels: 32
+  dct_block_size: 8
+  quantization_quality: 50        # 1-100, higher = better fidelity, lower compression
+  batch_size: 16
+  epochs: 30
+  lr: 0.0002
+  target_bands: 10                # full Sentinel-2 band set
+
+anomaly_detection:
+  method: "fourier_detrended_zscore"
+  index_used: "NDVI"
+  seasonal_harmonics: 3           # number of Fourier terms removed to model seasonality
+  z_threshold: 2.5
+  min_alert_area_px: 25
+
+evaluation:
+  metrics:
+    segmentation: [overall_accuracy, precision, recall, f1, mean_iou, kappa]
+    change_detection: [precision, recall, f1, iou]
+    compression: [psnr, ssim, sam, compression_ratio]
+
+paths:
+  checkpoints: "checkpoints"
+  logs: "logs"
+  outputs: "outputs"

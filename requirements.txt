@@ -1,0 +1,41 @@
+# Core numerics / IO
+numpy>=1.24
+scipy>=1.11
+pandas>=2.0
+
+# Geospatial
+rasterio>=1.3
+GDAL>=3.7
+shapely>=2.0
+geopandas>=0.14
+pyproj>=3.6
+fiona>=1.9
+
+# Classical transforms
+PyWavelets>=1.4
+
+# Deep learning
+torch>=2.1
+torchvision>=0.16
+transformers>=4.35        # SegFormer
+segmentation-models-pytorch>=0.3.3   # U-Net / DeepLabV3+ backbones
+timm>=0.9
+
+# Compression
+compressai>=1.2.4
+
+# Metrics / eval
+scikit-learn>=1.3
+scikit-image>=0.22        # SSIM
+torchmetrics>=1.2
+
+# Vegetation index / EE access (optional, for data acquisition)
+earthengine-api>=0.1.384
+geemap>=0.29
+
+# Viz / utils
+matplotlib>=3.8
+tqdm>=4.66
+PyYAML>=6.0
+albumentations>=1.3.1
+tensorboard>=2.15

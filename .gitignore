@@ -1,0 +1,40 @@
+# Python cache and tooling
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments and local configuration
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+
+# Jupyter and editor files
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Local and generated datasets
+data/
+
+# Training checkpoints and experiment logs
+checkpoints/
+logs/
+*.pt
+*.pth
+*.ckpt
+
+# Local diagnostic logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

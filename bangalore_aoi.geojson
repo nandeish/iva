@@ -1,0 +1,40 @@
+{
+  "type": "FeatureCollection",
+  "name": "bangalore_aoi",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bengaluru AOI",
+        "description": "Bounding-box AOI covering the Bengaluru/BBMP area"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.4593,
+              12.8317
+            ],
+            [
+              77.786,
+              12.8317
+            ],
+            [
+              77.786,
+              13.1447
+            ],
+            [
+              77.4593,
+              13.1447
+            ],
+            [
+              77.4593,
+              12.8317
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
